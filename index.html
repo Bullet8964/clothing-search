@@ -1,79 +1,55 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>服飾商品管理 Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-6">
-  <div class="max-w-7xl mx-auto">
-    <header class="mb-8 text-center">
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">服飾商品資料庫 Dashboard (60項商品)</h1>
-      <div class="flex justify-center max-w-md mx-auto">
-        <input type="text" id="searchInput" placeholder="搜尋商品名稱、顏色或類別..." 
-               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-    </header>
+<script>
+  // 請確認改為你的 GitHub 帳號名稱
+  const GITHUB_USER = "YOUR_GITHUB_USERNAME"; 
+  const REPO_NAME = "clothing-search";
 
-    <!-- 商品展示區塊 (Grid 繪製 60 張圖) -->
-    <main id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    </main>
-  </div>
+  // 精確對應你截圖中的 GitHub 資料夾路徑
+  function getImgUrl(idNum) {
+    const folderName = encodeURIComponent("clothing products 60 photos-20261102");
+    return `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderName}/images/products/product-${idNum}.jpg`;
+  }
 
-  <script>
-    // 預設 GitHub Raw 圖片基底路徑 (請更換 USERNAME)
-    const GITHUB_USER = "慶記BULLET";
-    const REPO_NAME = "clothing-search";
-    const baseImgUrl = `https://github.com/Bullet8964/-/tree/main/clothing%20products%2060%20photos-20261102/images/products`;
+  const categories = ["上衣", "褲子", "裙子", "外套", "洋裝", "運動服"];
+  const products = Array.from({ length: 60 }, (_, i) => {
+    const idNum = String(i + 1).padStart(3, '0');
+    return {
+      product_id: `P${idNum}`,
+      product_name: `服飾商品 ${idNum} 款`,
+      category: categories[i % 6],
+      price: 500 + (i * 30),
+      image_url: getImgUrl(idNum)
+    };
+  });
 
-    // 模擬 60 筆商品展示資料
-    const categories = ["上衣", "褲子", "裙子", "外套", "洋裝", "運動服"];
-    const products = Array.from({ length: 60 }, (_, i) => {
-      const idNum = String(i + 1).padStart(3, '0');
-      return {
-        product_id: `P${idNum}`,
-        product_name: `服飾商品 ${idNum} 款`,
-        category: categories[i % 6],
-        price: 500 + (i * 30),
-        image_url: `${baseImgUrl}product-${idNum}.jpg`
-      };
-    });
-
-    function renderProducts(items) {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = items.map(p => `
-        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-          <div class="h-64 overflow-hidden bg-gray-200">
-            <img src="${p.image_url}" alt="${p.product_name}" 
-                 class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
-                 onerror="this.src='https://via.placeholder.com/300x400?text=Product+Image'">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">${p.category}</span>
-              <span class="text-xs text-gray-500">${p.product_id}</span>
-            </div>
-            <h3 class="text-md font-bold text-gray-900 truncate">${p.product_name}</h3>
-            <p class="text-blue-600 font-bold mt-2">NT$ ${p.price}</p>
-          </div>
+  function renderProducts(items) {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = items.map(p => `
+      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+        <div class="h-64 overflow-hidden bg-gray-200">
+          <img src="${p.image_url}" alt="${p.product_name}" 
+               class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
+               onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Found'">
         </div>
-      `).join('');
-    }
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">${p.category}</span>
+            <span class="text-xs text-gray-500">${p.product_id}</span>
+          </div>
+          <h3 class="text-md font-bold text-gray-900 truncate">${p.product_name}</h3>
+          <p class="text-blue-600 font-bold mt-2">NT$ ${p.price}</p>
+        </div>
+      </div>
+    `).join('');
+  }
 
-    // 搜尋過濾
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      const filtered = products.filter(p => 
-        p.product_name.toLowerCase().includes(term) || 
-        p.category.toLowerCase().includes(term) ||
-        p.product_id.toLowerCase().includes(term)
-      );
-      renderProducts(filtered);
-    });
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = products.filter(p => 
+      p.product_name.toLowerCase().includes(term) || 
+      p.category.toLowerCase().includes(term)
+    );
+    renderProducts(filtered);
+  });
 
-    // 初始化載入
-    renderProducts(products);
-  </script>
-</body>
-</html>
+  renderProducts(products);
+</script>
