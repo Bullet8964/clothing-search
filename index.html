@@ -27,7 +27,7 @@
 
     // 2. 精確對應你截圖中的 GitHub 資料夾與圖片路徑結構
     function getImgUrl(idNum) {
-      const folderName = encodeURIComponent("clothing products 60 photos-20261102");
+      const folderName = encodeURIComponent("clothing products 60 photos-20261102/images/products");
       return `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderName}/images/products/product-${idNum}.jpg`;
     }
 
