@@ -24,20 +24,14 @@
     const GITHUB_USER = "Bullet8964"; 
     const REPO_NAME = "clothing-search"; 
 
-    // 多重備用路徑產出器（自動修正空格與域名解析）
+    // 直接使用標準轉碼的 GitHub Raw 絕對路徑
     function getImgUrls(imgNum) {
-      const folderRaw = "clothing products 60 photos-20261102/images/products";
-      const folderEncoded = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
-      
+      const pathEncoded = "clothing%20products%2060%20photos-20261102/images/products";
+      const pathRaw = "clothing products 60 photos-20261102/images/products";
       return [
-        // 1. GitHub Pages 本地相對路徑 (已處理空白轉碼)
-        `./${folderEncoded}/product-${imgNum}.jpg`,
-        // 2. GitHub Pages 絕對網址
-        `https://${GITHUB_USER}.github.io/${REPO_NAME}/${folderEncoded}/product-${imgNum}.jpg`,
-        // 3. Raw GitHub 內容備援網址
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderEncoded}/product-${imgNum}.jpg`,
-        // 4. 原生未轉碼備援
-        `./clothing products 60 photos-20261102/images/products/product-${imgNum}.jpg`
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${pathEncoded}/product-${imgNum}.jpg`,
+        `./${pathRaw}/product-${imgNum}.jpg`,
+        `./${pathEncoded}/product-${imgNum}.jpg`
       ];
     }
 
