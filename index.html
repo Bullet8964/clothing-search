@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>服飾商品管理 Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
   <div class="max-w-7xl mx-auto">
@@ -24,19 +24,17 @@
     const GITHUB_USER = "Bullet8964"; 
     const REPO_NAME = "clothing-search"; 
 
-    // 自動導向 GitHub 上的圖片路徑
     function getImgUrls(imgNum) {
       const folderPath = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
       const folderPath2 = encodeURIComponent("clothing products 60 photos-20261102");
       return [
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${imgNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath2}/product-${imgNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${imgNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/images/products/product-${imgNum}.jpg`
+        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${imgNum}.jpg`,
+        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/${folderPath2}/product-${imgNum}.jpg`,
+        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${imgNum}.jpg`,
+        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/images/products/product-${imgNum}.jpg`
       ];
     }
 
-    // 正確校正：洋裝(001-010)、上衣(011-020)、褲子(021-030)、裙子(031-040)、外套(041-050)、運動服(051-060)
     const products = [
       { product_id: 'P001', product_name: '純棉T恤 001款', category: '上衣', price: 500, imgNum: '011' },
       { product_id: 'P002', product_name: '直筒牛仔褲 002款', category: '褲子', price: 530, imgNum: '021' },
@@ -133,7 +131,7 @@
         img.setAttribute('data-try', tryIndex);
         img.src = urls[tryIndex];
       } else {
-        img.src = 'https://via.placeholder.com/300x400?text=Product+Image';
+        img.src = '[https://via.placeholder.com/300x400?text=Product+Image](https://via.placeholder.com/300x400?text=Product+Image)';
       }
     }
 
