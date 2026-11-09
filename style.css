@@ -11,7 +11,7 @@ body{background:linear-gradient(180deg,#fff8f9 0%,#fffaf8 42%,#fff6f7 100%)}
 .product-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
 .product-card{border-radius:18px;box-shadow:0 5px 20px rgba(180,76,99,.07);border-color:#f5dfe4}
 .product-image{height:auto;aspect-ratio:3/4;background:#fae9ec}
-.product-image img{transition:transform .45s ease}
+.product-image img{object-fit:cover;object-position:top center;transition:transform .45s ease}
 .product-card:hover .product-image img{transform:scale(1.055)}
 .product-info{padding:15px 15px 17px}
 .product-info h3{font-size:15px;line-height:1.5;min-height:23px}
