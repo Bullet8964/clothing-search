@@ -21,14 +21,21 @@
   </div>
 
   <script>
-    // 1. 請填入你真實的 GitHub 帳號 ID (例如: diamondk123) 與 Repository 名稱
+    // 1. 設定你的 GitHub 帳號 ID 與 Repository 名稱
     const GITHUB_USER = "Bullet8964"; 
     const REPO_NAME = "clothing-search"; 
 
-    // 2. 修正後的正確路徑拼接（修正多重複一次 images/products 的錯誤）
-    function getImgUrl(idNum) {
-      const folderPath = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
-      return `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${idNum}.jpg`;
+    // 2. 自動容錯路徑產生器（修正路徑重複問題，並加入多種可能上傳路徑備選）
+    function getImgUrls(idNum) {
+      const f1 = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
+      const f2 = encodeURIComponent("clothing products 60 photos-20261102");
+      return [
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${f1}/product-${idNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${f2}/product-${idNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${idNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/images/products/product-${idNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/product-${idNum}.jpg`
+      ];
     }
 
     const categories = ["上衣", "褲子", "裙子", "外套", "洋裝", "運動服"];
@@ -39,29 +46,46 @@
         product_name: `服飾商品 ${idNum} 款`,
         category: categories[i % 6],
         price: 500 + (i * 30),
-        image_url: getImgUrl(idNum)
+        idNum: idNum
       };
     });
 
     function renderProducts(items) {
       const grid = document.getElementById('productGrid');
-      grid.innerHTML = items.map(p => `
-        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-          <div class="h-64 overflow-hidden bg-gray-200">
-            <img src="${p.image_url}" alt="${p.product_name}" 
-                 class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
-                 onerror="this.src='https://via.placeholder.com/300x400?text=Product+Image'">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">${p.category}</span>
-              <span class="text-xs text-gray-500">${p.product_id}</span>
+      grid.innerHTML = items.map(p => {
+        const urls = getImgUrls(p.idNum);
+        return `
+          <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+            <div class="h-64 overflow-hidden bg-gray-200">
+              <img src="${urls[0]}" 
+                   data-try="0"
+                   alt="${p.product_name}" 
+                   class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
+                   onerror="handleImageError(this, '${p.idNum}')">
             </div>
-            <h3 class="text-md font-bold text-gray-900 truncate">${p.product_name}</h3>
-            <p class="text-blue-600 font-bold mt-2">NT$ ${p.price}</p>
+            <div class="p-4">
+              <div class="flex justify-between items-center mb-2">
+                <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">${p.category}</span>
+                <span class="text-xs text-gray-500">${p.product_id}</span>
+              </div>
+              <h3 class="text-md font-bold text-gray-900 truncate">${p.product_name}</h3>
+              <p class="text-blue-600 font-bold mt-2">NT$ ${p.price}</p>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    // 當第一條圖片網址破圖時，自動嘗試下一條備用網址
+    function handleImageError(img, idNum) {
+      const urls = getImgUrls(idNum);
+      let tryIndex = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
+      if (tryIndex < urls.length) {
+        img.setAttribute('data-try', tryIndex);
+        img.src = urls[tryIndex];
+      } else {
+        img.src = 'https://via.placeholder.com/300x400?text=Product+Image';
+      }
     }
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
