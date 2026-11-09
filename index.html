@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>服飾商品管理 Dashboard</title>
-  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
   <div class="max-w-7xl mx-auto">
@@ -24,17 +24,27 @@
     const GITHUB_USER = "Bullet8964"; 
     const REPO_NAME = "clothing-search"; 
 
+    // 全方位涵蓋所有上傳可能性的 GitHub RAW / Pages 圖片 URL 產生器
     function getImgUrls(imgNum) {
-      const folderPath = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
-      const folderPath2 = encodeURIComponent("clothing products 60 photos-20261102");
+      const rawBase = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main`;
       return [
-        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${imgNum}.jpg`,
-        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/${folderPath2}/product-${imgNum}.jpg`,
-        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${imgNum}.jpg`,
-        `[https://raw.githubusercontent.com/$](https://raw.githubusercontent.com/$){GITHUB_USER}/${REPO_NAME}/main/images/products/product-${imgNum}.jpg`
+        // 1. 包含原始解壓子路徑 (未編碼空格與已編碼空格)
+        `${rawBase}/clothing products 60 photos-20261102/images/products/product-${imgNum}.jpg`,
+        `${rawBase}/clothing%20products%2060%20photos-20261102/images/products/product-${imgNum}.jpg`,
+        // 2. 底線命名或直接下層資料夾
+        `${rawBase}/clothing_products_60_photos/images/products/product-${imgNum}.jpg`,
+        `${rawBase}/clothing_products_60_photos/product-${imgNum}.jpg`,
+        `${rawBase}/clothing products 60 photos-20261102/product-${imgNum}.jpg`,
+        // 3. 直接擺在根目錄或 images/products
+        `${rawBase}/images/products/product-${imgNum}.jpg`,
+        `${rawBase}/product-${imgNum}.jpg`,
+        // 4. 當前相對路徑備援 (適用於 GitHub Pages 內部讀取)
+        `./clothing products 60 photos-20261102/images/products/product-${imgNum}.jpg`,
+        `./images/products/product-${imgNum}.jpg`
       ];
     }
 
+    // 60 筆正式商品明細與正確照片分組綁定
     const products = [
       { product_id: 'P001', product_name: '純棉T恤 001款', category: '上衣', price: 500, imgNum: '011' },
       { product_id: 'P002', product_name: '直筒牛仔褲 002款', category: '褲子', price: 530, imgNum: '021' },
@@ -131,7 +141,7 @@
         img.setAttribute('data-try', tryIndex);
         img.src = urls[tryIndex];
       } else {
-        img.src = '[https://via.placeholder.com/300x400?text=Product+Image](https://via.placeholder.com/300x400?text=Product+Image)';
+        img.src = 'https://via.placeholder.com/300x400?text=Product+Image';
       }
     }
 
