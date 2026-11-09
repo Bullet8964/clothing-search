@@ -25,85 +25,85 @@
     const REPO_NAME = "clothing-search"; 
 
     // 自動匹配 GitHub 上傳的資料夾路徑結構
-    function getImgUrls(idNum) {
+    function getImgUrls(imgNum) {
       const folderPath = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
       const folderPath2 = encodeURIComponent("clothing products 60 photos-20261102");
       return [
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${idNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath2}/product-${idNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${idNum}.jpg`,
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/images/products/product-${idNum}.jpg`
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath}/product-${imgNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${folderPath2}/product-${imgNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/clothing_products_60_photos/product-${imgNum}.jpg`,
+        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/images/products/product-${imgNum}.jpg`
       ];
     }
 
-    // 正式資料庫對應的 60 筆商品明細資料
+    // 重新校正對應關係，讓「標籤類別」與「圖片視覺內容」100% 完全一致
     const products = [
-      { product_id: 'P0001', product_name: '純棉T恤 01款', category: '上衣', price: 610, idNum: '001' },
-      { product_id: 'P0002', product_name: '直筒牛仔褲 02款', category: '褲子', price: 830, idNum: '002' },
-      { product_id: 'P0003', product_name: '百褶裙 03款', category: '裙子', price: 1050, idNum: '003' },
-      { product_id: 'P0004', product_name: '防風外套 04款', category: '外套', price: 1270, idNum: '004' },
-      { product_id: 'P0005', product_name: '碎花洋裝 05款', category: '洋裝', price: 1490, idNum: '005' },
-      { product_id: 'P0006', product_name: '運動上衣 06款', category: '運動服', price: 1710, idNum: '006' },
-      { product_id: 'P0007', product_name: '襯衫 07款', category: '上衣', price: 1930, idNum: '007' },
-      { product_id: 'P0008', product_name: '休閒長褲 08款', category: '褲子', price: 2150, idNum: '008' },
-      { product_id: 'P0009', product_name: '牛仔短裙 09款', category: '裙子', price: 2370, idNum: '009' },
-      { product_id: 'P0010', product_name: '丹寧外套 10款', category: '外套', price: 500, idNum: '010' },
-      { product_id: 'P0011', product_name: '無袖洋裝 11款', category: '洋裝', price: 720, idNum: '011' },
-      { product_id: 'P0012', product_name: '瑜伽褲 12款', category: '運動服', price: 940, idNum: '012' },
-      { product_id: 'P0013', product_name: '針織上衣 13款', category: '上衣', price: 1160, idNum: '013' },
-      { product_id: 'P0014', product_name: '西裝褲 14款', category: '褲子', price: 1380, idNum: '014' },
-      { product_id: 'P0015', product_name: '長裙 15款', category: '裙子', price: 1600, idNum: '015' },
-      { product_id: 'P0016', product_name: '連帽外套 16款', category: '外套', price: 1820, idNum: '016' },
-      { product_id: 'P0017', product_name: '長袖洋裝 17款', category: '洋裝', price: 2040, idNum: '017' },
-      { product_id: 'P0018', product_name: '訓練短褲 18款', category: '運動服', price: 2260, idNum: '018' },
-      { product_id: 'P0019', product_name: '短袖上衣 19款', category: '上衣', price: 390, idNum: '019' },
-      { product_id: 'P0020', product_name: '寬褲 20款', category: '褲子', price: 610, idNum: '020' },
-      { product_id: 'P0021', product_name: 'A字裙 21款', category: '裙子', price: 830, idNum: '021' },
-      { product_id: 'P0022', product_name: '西裝外套 22款', category: '外套', price: 1050, idNum: '022' },
-      { product_id: 'P0023', product_name: '襯衫洋裝 23款', category: '洋裝', price: 1270, idNum: '023' },
-      { product_id: 'P0024', product_name: '運動外套 24款', category: '運動服', price: 1490, idNum: '024' },
-      { product_id: 'P0025', product_name: '條紋上衣 25款', category: '上衣', price: 1710, idNum: '025' },
-      { product_id: 'P0026', product_name: '棉質短褲 26款', category: '褲子', price: 1930, idNum: '026' },
-      { product_id: 'P0027', product_name: '針織裙 27款', category: '裙子', price: 2150, idNum: '027' },
-      { product_id: 'P0028', product_name: '羊毛外套 28款', category: '外套', price: 2370, idNum: '028' },
-      { product_id: 'P0029', product_name: '針織洋裝 29款', category: '洋裝', price: 500, idNum: '029' },
-      { product_id: 'P0030', product_name: '慢跑長褲 30款', category: '運動服', price: 720, idNum: '030' },
-      { product_id: 'P0031', product_name: '純棉T恤 31款', category: '上衣', price: 940, idNum: '031' },
-      { product_id: 'P0032', product_name: '直筒牛仔褲 32款', category: '褲子', price: 1160, idNum: '032' },
-      { product_id: 'P0033', product_name: '百褶裙 33款', category: '裙子', price: 1380, idNum: '033' },
-      { product_id: 'P0034', product_name: '防風外套 34款', category: '外套', price: 1600, idNum: '034' },
-      { product_id: 'P0035', product_name: '碎花洋裝 35款', category: '洋裝', price: 1820, idNum: '035' },
-      { product_id: 'P0036', product_name: '運動上衣 36款', category: '運動服', price: 2040, idNum: '036' },
-      { product_id: 'P0037', product_name: '襯衫 37款', category: '上衣', price: 2260, idNum: '037' },
-      { product_id: 'P0038', product_name: '休閒長褲 38款', category: '褲子', price: 480, idNum: '038' },
-      { product_id: 'P0039', product_name: '牛仔短裙 39款', category: '裙子', price: 700, idNum: '039' },
-      { product_id: 'P0040', product_name: '丹寧外套 40款', category: '外套', price: 920, idNum: '040' },
-      { product_id: 'P0041', product_name: '無袖洋裝 41款', category: '洋裝', price: 1140, idNum: '041' },
-      { product_id: 'P0042', product_name: '瑜伽褲 42款', category: '運動服', price: 1360, idNum: '042' },
-      { product_id: 'P0043', product_name: '針織上衣 43款', category: '上衣', price: 1580, idNum: '043' },
-      { product_id: 'P0044', product_name: '西裝褲 44款', category: '褲子', price: 1800, idNum: '044' },
-      { product_id: 'P0045', product_name: '長裙 45款', category: '裙子', price: 2020, idNum: '045' },
-      { product_id: 'P0046', product_name: '連帽外套 46款', category: '外套', price: 2240, idNum: '046' },
-      { product_id: 'P0047', product_name: '長袖洋裝 47款', category: '洋裝', price: 500, idNum: '047' },
-      { product_id: 'P0048', product_name: '訓練短褲 48款', category: '運動服', price: 720, idNum: '048' },
-      { product_id: 'P0049', product_name: '短袖上衣 49款', category: '上衣', price: 940, idNum: '049' },
-      { product_id: 'P0050', product_name: '寬褲 50款', category: '褲子', price: 1160, idNum: '050' },
-      { product_id: 'P0051', product_name: 'A字裙 51款', category: '裙子', price: 1380, idNum: '051' },
-      { product_id: 'P0052', product_name: '西裝外套 52款', category: '外套', price: 1600, idNum: '052' },
-      { product_id: 'P0053', product_name: '襯衫洋裝 53款', category: '洋裝', price: 1820, idNum: '053' },
-      { product_id: 'P0054', product_name: '運動外套 54款', category: '運動服', price: 2040, idNum: '054' },
-      { product_id: 'P0055', product_name: '條紋上衣 55款', category: '上衣', price: 2260, idNum: '055' },
-      { product_id: 'P0056', product_name: '棉質短褲 56款', category: '褲子', price: 480, idNum: '056' },
-      { product_id: 'P0057', product_name: '針織裙 57款', category: '裙子', price: 700, idNum: '057' },
-      { product_id: 'P0058', product_name: '羊毛外套 58款', category: '外套', price: 920, idNum: '058' },
-      { product_id: 'P0059', product_name: '針織洋裝 59款', category: '洋裝', price: 1140, idNum: '059' },
-      { product_id: 'P0060', product_name: '慢跑長褲 60款', category: '運動服', price: 1360, idNum: '060' }
+      { product_id: 'P0001', product_name: '純棉T恤 01款', category: '上衣', price: 610, imgNum: '011' },
+      { product_id: 'P0002', product_name: '直筒牛仔褲 02款', category: '褲子', price: 830, imgNum: '021' },
+      { product_id: 'P0003', product_name: '百褶裙 03款', category: '裙子', price: 1050, imgNum: '031' },
+      { product_id: 'P0004', product_name: '防風外套 04款', category: '外套', price: 1270, imgNum: '041' },
+      { product_id: 'P0005', product_name: '碎花洋裝 05款', category: '洋裝', price: 1490, imgNum: '001' },
+      { product_id: 'P0006', product_name: '運動上衣 06款', category: '運動服', price: 1710, imgNum: '051' },
+      { product_id: 'P0007', product_name: '襯衫 07款', category: '上衣', price: 1930, imgNum: '012' },
+      { product_id: 'P0008', product_name: '休閒長褲 08款', category: '褲子', price: 2150, imgNum: '022' },
+      { product_id: 'P0009', product_name: '牛仔短裙 09款', category: '裙子', price: 2370, imgNum: '032' },
+      { product_id: 'P0010', product_name: '丹寧外套 10款', category: '外套', price: 500, imgNum: '042' },
+      { product_id: 'P0011', product_name: '無袖洋裝 11款', category: '洋裝', price: 720, imgNum: '002' },
+      { product_id: 'P0012', product_name: '瑜伽褲 12款', category: '運動服', price: 940, imgNum: '052' },
+      { product_id: 'P0013', product_name: '針織上衣 13款', category: '上衣', price: 1160, imgNum: '013' },
+      { product_id: 'P0014', product_name: '西裝褲 14款', category: '褲子', price: 1380, imgNum: '023' },
+      { product_id: 'P0015', product_name: '長裙 15款', category: '裙子', price: 1600, imgNum: '033' },
+      { product_id: 'P0016', product_name: '連帽外套 16款', category: '外套', price: 1820, imgNum: '043' },
+      { product_id: 'P0017', product_name: '長袖洋裝 17款', category: '洋裝', price: 2040, imgNum: '003' },
+      { product_id: 'P0018', product_name: '訓練短褲 18款', category: '運動服', price: 2260, imgNum: '053' },
+      { product_id: 'P0019', product_name: '短袖上衣 19款', category: '上衣', price: 390, imgNum: '014' },
+      { product_id: 'P0020', product_name: '寬褲 20款', category: '褲子', price: 610, imgNum: '024' },
+      { product_id: 'P0021', product_name: 'A字裙 21款', category: '裙子', price: 830, imgNum: '034' },
+      { product_id: 'P0022', product_name: '西裝外套 22款', category: '外套', price: 1050, imgNum: '044' },
+      { product_id: 'P0023', product_name: '襯衫洋裝 23款', category: '洋裝', price: 1270, imgNum: '004' },
+      { product_id: 'P0024', product_name: '運動外套 24款', category: '運動服', price: 1490, imgNum: '054' },
+      { product_id: 'P0025', product_name: '條紋上衣 25款', category: '上衣', price: 1710, imgNum: '015' },
+      { product_id: 'P0026', product_name: '棉質短褲 26款', category: '褲子', price: 1930, imgNum: '025' },
+      { product_id: 'P0027', product_name: '針織裙 27款', category: '裙子', price: 2150, imgNum: '035' },
+      { product_id: 'P0028', product_name: '羊毛外套 28款', category: '外套', price: 2370, imgNum: '045' },
+      { product_id: 'P0029', product_name: '針織洋裝 29款', category: '洋裝', price: 500, imgNum: '005' },
+      { product_id: 'P0030', product_name: '慢跑長褲 30款', category: '運動服', price: 720, imgNum: '055' },
+      { product_id: 'P0031', product_name: '純棉T恤 31款', category: '上衣', price: 940, imgNum: '016' },
+      { product_id: 'P0032', product_name: '直筒牛仔褲 32款', category: '褲子', price: 1160, imgNum: '026' },
+      { product_id: 'P0033', product_name: '百褶裙 33款', category: '裙子', price: 1380, imgNum: '036' },
+      { product_id: 'P0034', product_name: '防風外套 34款', category: '外套', price: 1600, imgNum: '046' },
+      { product_id: 'P0035', product_name: '碎花洋裝 35款', category: '洋裝', price: 1820, imgNum: '006' },
+      { product_id: 'P0036', product_name: '運動上衣 36款', category: '運動服', price: 2040, imgNum: '056' },
+      { product_id: 'P0037', product_name: '襯衫 37款', category: '上衣', price: 2260, imgNum: '017' },
+      { product_id: 'P0038', product_name: '休閒長褲 38款', category: '褲子', price: 480, imgNum: '027' },
+      { product_id: 'P0039', product_name: '牛仔短裙 39款', category: '裙子', price: 700, imgNum: '037' },
+      { product_id: 'P0040', product_name: '丹寧外套 40款', category: '外套', price: 920, imgNum: '047' },
+      { product_id: 'P0041', product_name: '無袖洋裝 41款', category: '洋裝', price: 1140, imgNum: '007' },
+      { product_id: 'P0042', product_name: '瑜伽褲 42款', category: '運動服', price: 1360, imgNum: '057' },
+      { product_id: 'P0043', product_name: '針織上衣 43款', category: '上衣', price: 1580, imgNum: '018' },
+      { product_id: 'P0044', product_name: '西裝褲 44款', category: '褲子', price: 1800, imgNum: '028' },
+      { product_id: 'P0045', product_name: '長裙 45款', category: '裙子', price: 2020, imgNum: '038' },
+      { product_id: 'P0046', product_name: '連帽外套 46款', category: '外套', price: 2240, imgNum: '048' },
+      { product_id: 'P0047', product_name: '長袖洋裝 47款', category: '洋裝', price: 500, imgNum: '008' },
+      { product_id: 'P0048', product_name: '訓練短褲 48款', category: '運動服', price: 720, imgNum: '058' },
+      { product_id: 'P0049', product_name: '短袖上衣 49款', category: '上衣', price: 940, imgNum: '019' },
+      { product_id: 'P0050', product_name: '寬褲 50款', category: '褲子', price: 1160, imgNum: '029' },
+      { product_id: 'P0051', product_name: 'A字裙 51款', category: '裙子', price: 1380, imgNum: '039' },
+      { product_id: 'P0052', product_name: '西裝外套 52款', category: '外套', price: 1600, imgNum: '049' },
+      { product_id: 'P0053', product_name: '襯衫洋裝 53款', category: '洋裝', price: 1820, imgNum: '009' },
+      { product_id: 'P0054', product_name: '運動外套 54款', category: '運動服', price: 2040, imgNum: '059' },
+      { product_id: 'P0055', product_name: '條紋上衣 55款', category: '上衣', price: 2260, imgNum: '020' },
+      { product_id: 'P0056', product_name: '棉質短褲 56款', category: '褲子', price: 480, imgNum: '030' },
+      { product_id: 'P0057', product_name: '針織裙 57款', category: '裙子', price: 700, imgNum: '040' },
+      { product_id: 'P0058', product_name: '羊毛外套 58款', category: '外套', price: 920, imgNum: '050' },
+      { product_id: 'P0059', product_name: '針織洋裝 59款', category: '洋裝', price: 1140, imgNum: '010' },
+      { product_id: 'P0060', product_name: '慢跑長褲 60款', category: '運動服', price: 1360, imgNum: '060' }
     ];
 
     function renderProducts(items) {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = items.map(p => {
-        const urls = getImgUrls(p.idNum);
+        const urls = getImgUrls(p.imgNum);
         return `
           <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
             <div class="h-64 overflow-hidden bg-gray-200">
@@ -111,7 +111,7 @@
                    data-try="0"
                    alt="${p.product_name}" 
                    class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
-                   onerror="handleImageError(this, '${p.idNum}')">
+                   onerror="handleImageError(this, '${p.imgNum}')">
             </div>
             <div class="p-4">
               <div class="flex justify-between items-center mb-2">
@@ -126,8 +126,8 @@
       }).join('');
     }
 
-    function handleImageError(img, idNum) {
-      const urls = getImgUrls(idNum);
+    function handleImageError(img, imgNum) {
+      const urls = getImgUrls(imgNum);
       let tryIndex = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
       if (tryIndex < urls.length) {
         img.setAttribute('data-try', tryIndex);
