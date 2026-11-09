@@ -1,154 +1,136 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>服飾商品管理 Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="衣物搜尋｜少女風服飾穿搭與商品搜尋系統 (Bullet8964)">
+  <title>衣物搜尋 ♡ Find Your Style</title>
+  <link rel="stylesheet" href="style.css?v=20261109-1">
+  <script src="script.js?v=20261109-1" defer></script>
 </head>
-<body class="bg-gray-100 min-h-screen p-6">
-  <div class="max-w-7xl mx-auto">
-    <header class="mb-8 text-center">
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">服飾商品資料庫 Dashboard (60項商品)</h1>
-      <div class="flex justify-center max-w-md mx-auto">
-        <input type="text" id="searchInput" placeholder="搜尋商品名稱、類別或編號..." 
-               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-    </header>
+<body>
+  <div class="announcement">♡ 每一天，都值得穿上喜歡的自己 ♡</div>
+  <header class="header">
+    <a href="#" class="brand" aria-label="回首頁">
+      <span class="brand-icon">♕</span>
+      <span>衣物搜尋<small>Find Your Style ♡</small></span>
+    </a>
+    <nav aria-label="主要導覽">
+      <a href="#home">首頁</a>
+      <a href="#categories">商品分類</a>
+      <a href="#new">最新上架</a>
+      <a href="#inspire">穿搭靈感</a>
+      <a href="#about">關於我們</a>
+    </nav>
+    <div class="actions">
+      <button id="favoriteToggle" aria-label="只顯示收藏">♡ <span id="favoriteCount">0</span></button>
+      <button id="cartToggle" aria-label="購物車">🛍 <span id="cartCount">0</span></button>
+    </div>
+  </header>
 
-    <main id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    </main>
-  </div>
-
-  <script>
-    const GITHUB_USER = "Bullet8964"; 
-    const REPO_NAME = "clothing-search"; 
-
-    // 自動匹配你 GitHub 上的真實資料夾結構 (處理空白字元轉碼 %20 與 Raw 網址)
-    function getImgUrls(imgNum) {
-      const pathEncoded = encodeURIComponent("clothing products 60 photos-20261102") + "/images/products";
-      const pathRaw = "clothing products 60 photos-20261102/images/products";
-      return [
-        `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${pathEncoded}/product-${imgNum}.jpg`,
-        `./${pathRaw}/product-${imgNum}.jpg`,
-        `./${pathEncoded}/product-${imgNum}.jpg`
-      ];
-    }
-
-    // 重新校正對應關係：
-    // 洋裝(001-010)、上衣(011-020)、褲子(021-030)、裙子(031-040)、外套(041-050)、運動服(051-060)
-    // 讓「資料庫商品名稱/標籤」與「GitHub 照片種類」100% 精確對齊
-    const products = [
-      { product_id: 'P0001', product_name: '純棉T恤 01款', category: '上衣', price: 610, imgNum: '011' },
-      { product_id: 'P0002', product_name: '直筒牛仔褲 02款', category: '褲子', price: 830, imgNum: '021' },
-      { product_id: 'P0003', product_name: '百褶裙 03款', category: '裙子', price: 1050, imgNum: '031' },
-      { product_id: 'P0004', product_name: '防風外套 04款', category: '外套', price: 1270, imgNum: '041' },
-      { product_id: 'P0005', product_name: '碎花洋裝 05款', category: '洋裝', price: 1490, imgNum: '001' },
-      { product_id: 'P0006', product_name: '運動上衣 06款', category: '運動服', price: 1710, imgNum: '051' },
-      { product_id: 'P0007', product_name: '襯衫 07款', category: '上衣', price: 1930, imgNum: '012' },
-      { product_id: 'P0008', product_name: '休閒長褲 08款', category: '褲子', price: 2150, imgNum: '022' },
-      { product_id: 'P0009', product_name: '牛仔短裙 09款', category: '裙子', price: 2370, imgNum: '032' },
-      { product_id: 'P0010', product_name: '丹寧外套 10款', category: '外套', price: 500, imgNum: '042' },
-      { product_id: 'P0011', product_name: '無袖洋裝 11款', category: '洋裝', price: 720, imgNum: '002' },
-      { product_id: 'P0012', product_name: '瑜伽褲 12款', category: '運動服', price: 940, imgNum: '052' },
-      { product_id: 'P0013', product_name: '針織上衣 13款', category: '上衣', price: 1160, imgNum: '013' },
-      { product_id: 'P0014', product_name: '西裝褲 14款', category: '褲子', price: 1380, imgNum: '023' },
-      { product_id: 'P0015', product_name: '長裙 15款', category: '裙子', price: 1600, imgNum: '033' },
-      { product_id: 'P0016', product_name: '連帽外套 16款', category: '外套', price: 1820, imgNum: '043' },
-      { product_id: 'P0017', product_name: '長袖洋裝 17款', category: '洋裝', price: 2040, imgNum: '003' },
-      { product_id: 'P0018', product_name: '訓練短褲 18款', category: '運動服', price: 2260, imgNum: '053' },
-      { product_id: 'P0019', product_name: '短袖上衣 19款', category: '上衣', price: 390, imgNum: '014' },
-      { product_id: 'P0020', product_name: '寬褲 20款', category: '褲子', price: 610, imgNum: '024' },
-      { product_id: 'P0021', product_name: 'A字裙 21款', category: '裙子', price: 830, imgNum: '034' },
-      { product_id: 'P0022', product_name: '西裝外套 22款', category: '外套', price: 1050, imgNum: '044' },
-      { product_id: 'P0023', product_name: '襯衫洋裝 23款', category: '洋裝', price: 1270, imgNum: '004' },
-      { product_id: 'P0024', product_name: '運動外套 24款', category: '運動服', price: 1490, imgNum: '054' },
-      { product_id: 'P0025', product_name: '條紋上衣 25款', category: '上衣', price: 1710, imgNum: '015' },
-      { product_id: 'P0026', product_name: '棉質短褲 26款', category: '褲子', price: 1930, imgNum: '025' },
-      { product_id: 'P0027', product_name: '針織裙 27款', category: '裙子', price: 2150, imgNum: '035' },
-      { product_id: 'P0028', product_name: '羊毛外套 28款', category: '外套', price: 2370, imgNum: '045' },
-      { product_id: 'P0029', product_name: '針織洋裝 29款', category: '洋裝', price: 500, imgNum: '005' },
-      { product_id: 'P0030', product_name: '慢跑長褲 30款', category: '運動服', price: 720, imgNum: '055' },
-      { product_id: 'P0031', product_name: '純棉T恤 31款', category: '上衣', price: 940, imgNum: '016' },
-      { product_id: 'P0032', product_name: '直筒牛仔褲 32款', category: '褲子', price: 1160, imgNum: '026' },
-      { product_id: 'P0033', product_name: '百褶裙 33款', category: '裙子', price: 1380, imgNum: '036' },
-      { product_id: 'P0034', product_name: '防風外套 34款', category: '外套', price: 1600, imgNum: '046' },
-      { product_id: 'P0035', product_name: '碎花洋裝 35款', category: '洋裝', price: 1820, imgNum: '006' },
-      { product_id: 'P0036', product_name: '運動上衣 36款', category: '運動服', price: 2040, imgNum: '056' },
-      { product_id: 'P0037', product_name: '襯衫 37款', category: '上衣', price: 2260, imgNum: '017' },
-      { product_id: 'P0038', product_name: '休閒長褲 38款', category: '褲子', price: 480, imgNum: '027' },
-      { product_id: 'P0039', product_name: '牛仔短裙 39款', category: '裙子', price: 700, imgNum: '037' },
-      { product_id: 'P0040', product_name: '丹寧外套 40款', category: '外套', price: 920, imgNum: '047' },
-      { product_id: 'P0041', product_name: '無袖洋裝 41款', category: '洋裝', price: 1140, imgNum: '007' },
-      { product_id: 'P0042', product_name: '瑜伽褲 42款', category: '運動服', price: 1360, imgNum: '057' },
-      { product_id: 'P0043', product_name: '針織上衣 43款', category: '上衣', price: 1580, imgNum: '018' },
-      { product_id: 'P0044', product_name: '西裝褲 44款', category: '褲子', price: 1800, imgNum: '028' },
-      { product_id: 'P0045', product_name: '長裙 45款', category: '裙子', price: 2020, imgNum: '038' },
-      { product_id: 'P0046', product_name: '連帽外套 46款', category: '外套', price: 2240, imgNum: '048' },
-      { product_id: 'P0047', product_name: '長袖洋裝 47款', category: '洋裝', price: 500, imgNum: '008' },
-      { product_id: 'P0048', product_name: '訓練短褲 48款', category: '運動服', price: 720, imgNum: '058' },
-      { product_id: 'P0049', product_name: '短袖上衣 49款', category: '上衣', price: 940, imgNum: '019' },
-      { product_id: 'P0050', product_name: '寬褲 50款', category: '褲子', price: 1160, imgNum: '029' },
-      { product_id: 'P0051', product_name: 'A字裙 51款', category: '裙子', price: 1380, imgNum: '039' },
-      { product_id: 'P0052', product_name: '西裝外套 52款', category: '外套', price: 1600, imgNum: '049' },
-      { product_id: 'P0053', product_name: '襯衫洋裝 53款', category: '洋裝', price: 1820, imgNum: '009' },
-      { product_id: 'P0054', product_name: '運動外套 54款', category: '運動服', price: 2040, imgNum: '059' },
-      { product_id: 'P0055', product_name: '條紋上衣 55款', category: '上衣', price: 2260, imgNum: '020' },
-      { product_id: 'P0056', product_name: '棉質短褲 56款', category: '褲子', price: 480, imgNum: '030' },
-      { product_id: 'P057', product_name: '針織裙 57款', category: '裙子', price: 700, imgNum: '040' },
-      { product_id: 'P0058', product_name: '羊毛外套 58款', category: '外套', price: 920, imgNum: '050' },
-      { product_id: 'P0059', product_name: '針織洋裝 59款', category: '洋裝', price: 1140, imgNum: '010' },
-      { product_id: 'P0060', product_name: '慢跑長褲 60款', category: '運動服', price: 1360, imgNum: '060' }
-    ];
-
-    function renderProducts(items) {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = items.map(p => {
-        const urls = getImgUrls(p.imgNum);
-        return `
-          <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-            <div class="h-64 overflow-hidden bg-gray-200">
-              <img src="${urls[0]}" 
-                   data-try="0"
-                   alt="${p.product_name}" 
-                   class="w-full h-full object-cover object-center hover:scale-105 transition duration-300"
-                   onerror="handleImageError(this, '${p.imgNum}')">
-            </div>
-            <div class="p-4">
-              <div class="flex justify-between items-center mb-2">
-                <span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">${p.category}</span>
-                <span class="text-xs text-gray-500">${p.product_id}</span>
-              </div>
-              <h3 class="text-md font-bold text-gray-900 truncate">${p.product_name}</h3>
-              <p class="text-blue-600 font-bold mt-2">NT$ ${p.price}</p>
-            </div>
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">BE YOUR OWN STYLE · 2026 COLLECTION</p>
+        <h1>找到屬於你的風格 <span>♡</span></h1>
+        <p>從今天開始，穿出更喜歡的自己</p>
+        <form id="searchForm" class="search-form">
+          <div class="search-line">
+            <label class="sr-only" for="keyword">商品名稱</label>
+            <input id="keyword" type="search" placeholder="搜尋洋裝、上衣、牛仔褲、外套…">
+            <button type="submit">⌕ 搜尋服飾</button>
           </div>
-        `;
-      }).join('');
-    }
+          <div class="filters">
+            <label>顏色 
+              <select id="color">
+                <option value="">全部顏色</option>
+              </select>
+            </label>
+            <label>最高價格 
+              <select id="price">
+                <option value="999999">不限價格</option>
+                <option value="500">NT$ 500 以下</option>
+                <option value="1000">NT$ 1,000 以下</option>
+                <option value="2000">NT$ 2,000 以下</option>
+                <option value="3000">NT$ 3,000 以下</option>
+              </select>
+            </label>
+            <label>分類 
+              <select id="category">
+                <option value="">全部分類</option>
+              </select>
+            </label>
+          </div>
+        </form>
+      </div>
+    </section>
 
-    function handleImageError(img, imgNum) {
-      const urls = getImgUrls(imgNum);
-      let tryIndex = parseInt(img.getAttribute('data-try') || '0', 10) + 1;
-      if (tryIndex < urls.length) {
-        img.setAttribute('data-try', tryIndex);
-        img.src = urls[tryIndex];
-      } else {
-        img.src = 'https://via.placeholder.com/300x400?text=Product+Image';
-      }
-    }
+    <section id="categories" class="section">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">SHOP BY CATEGORY</p>
+          <h2>找到喜歡的單品 <span>♡</span></h2>
+        </div>
+      </div>
+      <div class="category-grid" id="categoryTiles"></div>
+    </section>
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      const filtered = products.filter(p => 
-        p.product_name.toLowerCase().includes(term) || 
-        p.category.toLowerCase().includes(term) ||
-        p.product_id.toLowerCase().includes(term)
-      );
-      renderProducts(filtered);
-    });
+    <section class="promo-grid section" id="inspire">
+      <article class="promo promo-one">
+        <p>NEW SEASON</p>
+        <h2>溫柔日常・剛剛好的心動</h2>
+        <p>粉色系穿搭，讓日子多一點浪漫。</p>
+        <a href="#new">探索新品 →</a>
+      </article>
+      <article class="promo promo-two">
+        <p>LOOK BOOK</p>
+        <h2>今天想穿什麼？</h2>
+        <p>挑選屬於你的每日穿搭靈感。</p>
+        <a href="#new">開始搭配 →</a>
+      </article>
+    </section>
 
-    renderProducts(products);
-  </script>
+    <section id="new" class="section">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">NEW ARRIVALS</p>
+          <h2>最新上架 <span>♥</span></h2>
+          <p id="resultCount" class="muted">正在載入商品中…</p>
+        </div>
+        <button class="text-button" id="resetSearch">清除篩選 ↗</button>
+      </div>
+      <div id="productGrid" class="product-grid"></div>
+      <div id="emptyState" class="empty" hidden>目前沒有符合條件的商品，試試其他搜尋條件 ♡</div>
+    </section>
+
+    <section class="newsletter section">
+      <p class="eyebrow">LITTLE MOMENTS, BIG STYLE</p>
+      <h2>把每一天，穿成喜歡的模樣 ♡</h2>
+      <p>柔和的色彩、喜歡的單品，還有獨一無二的你。</p>
+    </section>
+  </main>
+
+  <footer id="about">
+    <div class="footer-inner">
+      <div>
+        <strong>衣物搜尋 ♡</strong>
+        <p>Find Your Style — 少女風服飾搜尋教學網站</p>
+      </div>
+      <div>
+        <p>Google Colab × Python × TiDB Cloud × GitHub Pages</p>
+        <small>商品資料即時來自 TiDB Cloud；商品圖片網址由 TiDB Cloud 與 GitHub Pages 提供。</small>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="cartDialog">
+    <div class="dialog-head">
+      <h2>我的購物車 ♡</h2>
+      <button id="closeCart" aria-label="關閉">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <p id="cartTotal"></p>
+    <p class="muted">購物車僅供課堂示範，尚未提供實際結帳服務。</p>
+  </dialog>
 </body>
 </html>
