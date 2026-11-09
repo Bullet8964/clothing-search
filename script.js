@@ -3,7 +3,7 @@
 const GITHUB_USER = "Bullet8964";
 const REPO_NAME = "clothing-search";
 
-// API 網址設定 (可替換為您的 Render 或本機後端 API 網址)
+// API 網址設定 (若後端尚未啟動，前端已內建完整 60 筆資料集即時秒開)
 const API_URL = "https://clothing-search-api-vk6q.onrender.com/api/clothing";
 
 const $ = id => document.getElementById(id);
@@ -16,7 +16,7 @@ const categories = [
   ["運動服", "🏃", "Sports"]
 ];
 
-// 完整 60 件商品真實資料集 (與 TiDB Cloud / MySQL 完全一致，確保離線與首載 100% 正常顯示)
+// 完整 60 件商品真實資料集 (與 TiDB Cloud / MySQL 完全一致，保證 0 秒立即呈現)
 const DEFAULT_PRODUCTS = [
   {
     "id": "P0001",
@@ -781,7 +781,7 @@ function attachResilientImage(image, p) {
 const favorites = new Set();
 const cart = [];
 let products = [...DEFAULT_PRODUCTS];
-let visibleProducts = [];
+let visibleProducts = [...DEFAULT_PRODUCTS];
 let favoriteOnly = false;
 let requestNumber = 0;
 const productCache = new Map();
@@ -807,34 +807,36 @@ function addOption(select, value) {
 }
 
 function initialize() {
-  // 建立分類快捷方塊
+  // 1. 建立分類快捷方塊
   const categoryTiles = $("categoryTiles");
-  categoryTiles.replaceChildren();
-  for (const [name, emoji, english] of categories) {
-    addOption($("category"), name);
-    const tile = make("button", "category-tile");
-    tile.type = "button";
-    tile.dataset.category = name;
-    tile.append(make("span", "emoji", emoji), make("strong", "", name), make("small", "", english));
-    categoryTiles.append(tile);
+  if (categoryTiles) {
+    categoryTiles.replaceChildren();
+    for (const [name, emoji, english] of categories) {
+      addOption($("category"), name);
+      const tile = make("button", "category-tile");
+      tile.type = "button";
+      tile.dataset.category = name;
+      tile.append(make("span", "emoji", emoji), make("strong", "", name), make("small", "", english));
+      categoryTiles.append(tile);
+    }
+
+    categoryTiles.addEventListener("click", e => {
+      const tile = e.target.closest("[data-category]");
+      if (!tile) return;
+      const cat = tile.dataset.category;
+      const mapCategory = cat === "褲裝" ? "褲子" : (cat === "裙裝" ? "裙子" : cat);
+      $("category").value = mapCategory;
+      favoriteOnly = false;
+      filterAndRender();
+      $("new").scrollIntoView({ behavior: "smooth" });
+    });
   }
 
-  categoryTiles.addEventListener("click", e => {
-    const tile = e.target.closest("[data-category]");
-    if (!tile) return;
-    const cat = tile.dataset.category;
-    // 兼容「褲裝」與「褲子」、「裙裝」與「裙子」
-    const mapCategory = cat === "褲裝" ? "褲子" : (cat === "裙裝" ? "裙子" : cat);
-    $("category").value = mapCategory;
-    favoriteOnly = false;
-    filterAndRender();
-    $("new").scrollIntoView({ behavior: "smooth" });
-  });
-
+  // 2. 表單事件監聽
   $("searchForm").addEventListener("submit", e => {
     e.preventDefault();
     favoriteOnly = false;
-    fetchProducts();
+    filterAndRender();
     $("new").scrollIntoView({ behavior: "smooth" });
   });
 
@@ -865,11 +867,11 @@ function initialize() {
       favorites.has(id) ? favorites.delete(id) : favorites.add(id);
       $("favoriteCount").textContent = favorites.size;
       renderProducts();
-    }} else if (button.dataset.action === "cart") {
+    } else if (button.dataset.action === "cart") {
       cart.push(id);
       $("cartCount").textContent = cart.length;
       button.textContent = "✓";
-      setTimeout(() => button.textContent = "＋", 1200);
+      setTimeout(() => { button.textContent = "＋"; }, 1200);
     }
   });
 
@@ -881,40 +883,35 @@ function initialize() {
     renderCart();
   });
 
-  // 監聽即時輸入篩選
   $("keyword").addEventListener("input", filterAndRender);
   $("color").addEventListener("change", filterAndRender);
   $("category").addEventListener("change", filterAndRender);
   $("price").addEventListener("change", filterAndRender);
 
   updateColors();
-  fetchProducts();
+
+  // 3. 【關鍵】立即瞬間渲染商品卡片 (0 秒載入，無需等待網路請求)
+  filterAndRender();
+
+  // 4. 背景嘗試讀取遠端 API (若有啟用 TiDB Cloud API，則動態更新)
+  fetchProductsBackground();
 }
 
-async function fetchProducts() {
+async function fetchProductsBackground() {
   const seq = ++requestNumber;
-  const keyword = $("keyword").value.trim().toLowerCase();
-  const color = $("color").value;
-  const category = $("category").value;
-  const maxPrice = Number($("price").value) || 999999;
-
-  $("resultCount").textContent = "正在讀取商品資料庫（連線中）...";
-  $("emptyState").hidden = true;
-
   try {
-    const query = new URLSearchParams({ keyword, color, category, max_price: maxPrice });
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3500); // 3.5秒超時自動降級
+    const timeout = setTimeout(() => controller.abort(), 2000);
 
-    const response = await fetch(API_URL + "?" + query.toString(), {
+    const response = await fetch(API_URL, {
       headers: { "Accept": "application/json" },
       signal: controller.signal
     });
     clearTimeout(timeout);
 
-    if (!response.ok) throw new Error("HTTP " + response.status);
+    if (!response.ok) return;
     const data = await response.json();
-    if (!Array.isArray(data.products)) throw new Error("API 資料格式不正確");
+    if (!Array.isArray(data.products) || data.products.length === 0) return;
     if (seq !== requestNumber) return;
 
     products = data.products.map(p => {
@@ -934,14 +931,10 @@ async function fetchProducts() {
     });
 
     for (const p of products) productCache.set(p.id, p);
-    updateColors();
-    renderProducts();
-    $("resultCount").textContent = `找到 ${products.length} 件商品（TiDB Cloud 即時連線）`;
-  } catch (error) {
-    if (seq !== requestNumber) return;
-    // API 未啟用或離線時，無縫切換為本機 60 筆完整資料集
-    console.info("使用本機完整商品資料庫展示：", error.message);
     filterAndRender();
+    $("resultCount").textContent = `找到 ${products.length} 件商品（TiDB Cloud 即時連線）`;
+  } catch (err) {
+    // API 尚未啟動或休眠時，保持本機 60 筆資料，安靜無誤
   }
 }
 
@@ -991,7 +984,7 @@ function renderProducts() {
   const grid = $("productGrid");
   grid.replaceChildren();
 
-  const countText = `找到 ${visibleProducts.length} 件商品` + (favoriteOnly ? " · 我的收藏" : "") + "（資料庫正式對應）";
+  const countText = `找到 ${visibleProducts.length} 件商品` + (favoriteOnly ? " · 我的收藏" : "");
   $("resultCount").textContent = countText;
   $("emptyState").hidden = visibleProducts.length > 0;
 
