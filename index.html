@@ -139,4 +139,15 @@
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
-      const filtered = products.filter
+      const filtered = products.filter(p => 
+        p.product_name.toLowerCase().includes(term) || 
+        p.category.toLowerCase().includes(term) ||
+        p.product_id.toLowerCase().includes(term)
+      );
+      renderProducts(filtered);
+    });
+
+    renderProducts(products);
+  </script>
+</body>
+</html>
